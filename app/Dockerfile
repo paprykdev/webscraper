@@ -11,7 +11,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     curl \
-    docker \
     libx11-dev \
     libgdk-pixbuf2.0-0 \
     libcanberra-gtk-module \
@@ -20,7 +19,8 @@ RUN apt-get update && apt-get install -y \
     && mv chromedriver /usr/local/bin/ \
     && chmod +x /usr/local/bin/chromedriver
 
-# RUN chown -R python /usr/src/app
-# USER python
+RUN useradd python
+RUN chown -R python /usr/src/app
+USER python
 
 CMD ["python", "main.py"]
