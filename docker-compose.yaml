@@ -1,0 +1,26 @@
+services:
+  webscraper:
+    build:
+      context: ./app
+    container_name: webscraper
+    depends_on:
+      - redis
+    volumes:
+      - ./app:/usr/src/app
+    develop:
+      watch:
+        - path: ./app/requirements.txt
+          action: rebuild
+        - path: ./app
+          target: /usr/src/app
+          action: sync
+  redis:
+    image: "redis:alpine"
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  redis_data:
+  app:

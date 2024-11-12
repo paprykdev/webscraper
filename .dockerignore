@@ -1,0 +1,26 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Ignore virtual environment directories
+.venv/
+venv/
+env/
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore environment variables
+.env
+
+# Ignore Docker files
+Dockerfile
+docker-compose.yml
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore any other files or directories you want to exclude
