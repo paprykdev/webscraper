@@ -3,8 +3,6 @@ services:
     build:
       context: ./app
     container_name: webscraper
-    depends_on:
-      - redis
     volumes:
       - ./app:/usr/src/app
     develop:
@@ -13,14 +11,20 @@ services:
           action: rebuild
         - path: ./app
           target: /usr/src/app
-          action: sync
-  redis:
-    image: "redis:alpine"
-    volumes:
-      - redis_data:/data
+          action: sync+restart
+    command: tail -f /dev/null
+  selenium-hub:
+    image: "selenium/hub:3.141.59"
+    container_name: selenium-hub
     ports:
-      - "6379:6379"
+      - "4444:4444"
+  # redis:
+  #   image: "redis:alpine"
+  #   volumes:
+  #     - redis_data:/data
+  #   ports:
+  #     - "6379:6379"
 
 volumes:
-  redis_data:
+  # redis_data:
   app:
