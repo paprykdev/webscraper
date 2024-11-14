@@ -1,18 +1,15 @@
 services:
   webscraper:
     build:
-      context: ./app
+      context: .
+      dockerfile: ./docker/scripts/Dockerfile
     container_name: webscraper
     volumes:
-      - ./app:/usr/src/app
-    develop:
-      watch:
-        - path: ./app/requirements.txt
-          action: rebuild
-        - path: ./app
-          target: /usr/src/app
-          action: sync+restart
-    command: tail -f /dev/null
+      - .:/usr/src/app
+    command:
+      - tail
+      - -f
+      - /dev/null
   selenium-hub:
     image: "selenium/hub:3.141.59"
     container_name: selenium-hub
