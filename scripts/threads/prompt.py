@@ -61,6 +61,8 @@ def prompt():
                 ).stdout.decode()
             )
             continue
+        if command == "":
+            continue
         else:
             print("Command not found. Write 'h' for help.")
             continue
