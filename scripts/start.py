@@ -15,7 +15,7 @@ def run_command(command: str) -> str:
 
 
 def main():
-    docker_compose_file = os.getenv("DOCKER_COMPOSE_FILE", "../app/docker-compose.yaml")
+    docker_compose_file = os.getenv("DOCKER_COMPOSE_FILE", "./app/docker-compose.yaml")
     service_name = os.getenv("SERVICE_NAME", "webscraper")
     script_name = os.getenv("SCRIPT_NAME", "main.py")
 
