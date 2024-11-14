@@ -1,7 +1,6 @@
 from scraper import scrap
 import os
 import json
-import time
 
 urls = ["https://digitalprojects.wpi.art/monet/artworks"]
 hrefs = []
