@@ -1,4 +1,6 @@
 import subprocess
+import os
+import sys
 
 
 def run_command(command: str) -> str:
@@ -7,18 +9,23 @@ def run_command(command: str) -> str:
     )
     if process.returncode != 0:
         print(f"Error running command: {command}")
-        return process.stderr.decode()
+        print(process.stderr.decode())
+        sys.exit(process.returncode)
     return process.stdout.decode()
 
 
 def main():
-    print("Starting Docker Compose services...\n")
-    run_command("docker compose -f ../app/docker-compose.yaml up -d")
+    docker_compose_file = os.getenv("DOCKER_COMPOSE_FILE", "../app/docker-compose.yaml")
+    service_name = os.getenv("SERVICE_NAME", "webscraper")
+    script_name = os.getenv("SCRIPT_NAME", "main.py")
 
-    print(run_command("docker exec -it webscraper python main.py"))
+    print("Starting Docker Compose services...\n")
+    run_command(f"docker compose -f {docker_compose_file} up -d")
+
+    print(run_command(f"docker exec {service_name} python {script_name}"))
 
     print("Stopping and removing Docker Compose services...")
-    run_command("docker compose -f ../app/docker-compose.yaml  down")
+    run_command(f"docker compose -f {docker_compose_file} down")
 
 
 if __name__ == "__main__":
