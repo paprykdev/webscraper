@@ -12,5 +12,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Build the Docker image
-        run: python3 scripts/start.py
+      - name: Docker compose up
+        run: docker compose -f app/docker-compose.yaml up -d
+      - name: Start main.py
+        run: docker exec -it webscraper python main.py
+      - name: Docker compose down
+        run: docker compose -f app/docker-compose.yaml down
