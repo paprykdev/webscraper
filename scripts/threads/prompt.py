@@ -15,7 +15,7 @@ def prompt():
             print(help_list())
             continue
         if clearCondition(command):
-            run_command("clear")
+            clearScreen()
             continue
         if command.startswith("$"):
             systemCommand(command)

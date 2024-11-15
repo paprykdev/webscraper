@@ -19,15 +19,23 @@ def clearCondition(command: str) -> bool:
     return command in ["c", "clear", "cls"]
 
 
+def clearScreen():
+    print(run_command("clear"))
+    return None
+
+
 def systemCommand(command: str) -> str:
     words = command[1:].split()
     if words[0] == "":
         return "Command not found. Write 'h' for help."
-    print(
-        run_command(
-            f'docker exec -it webscraper {" ".join(words)}',
+    try:
+        print(
+            run_command(
+                f'docker exec -it webscraper {" ".join(words)}',
+            )
         )
-    )
+    except Exception as e:
+        print(f"An error occurred: {e}")
     return None
 
 
