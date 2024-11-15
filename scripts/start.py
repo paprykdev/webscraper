@@ -6,7 +6,7 @@ from get_path import get_path
 
 def main():
     docker_compose_file = os.getenv(
-        "DOCKER_COMPOSE_FILE", f"{get_path}/app/docker-compose.yaml"
+        "DOCKER_COMPOSE_FILE", f"{get_path()}/app/docker-compose.yaml"
     )
     service_name = os.getenv("SERVICE_NAME", "webscraper")
     script_name = os.getenv("SCRIPT_NAME", "main.py")
