@@ -7,8 +7,6 @@ def get_path():
     splitted = pwd.split("/")
     splitted[-1] = splitted[-1].replace("\n", "")
 
-    print(splitted[: splitted.index("webscraper") + 1])
-
     if splitted.count("webscraper") > 1 and "webscraper" in splitted:
         for i in range(len(splitted) - 1, -1, -1):
             potential_path = "/".join(splitted[: i + 1])
@@ -19,7 +17,8 @@ def get_path():
                 else:
                     return "This is not a valid webscraper project."
     else:
-        return "/".join(splitted[: splitted.index("webscraper") + 1])
+        path = "/".join(splitted[: splitted.index("webscraper") + 1])
+        return path
 
 
 def run_main():

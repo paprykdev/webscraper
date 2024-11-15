@@ -1,5 +1,4 @@
 import subprocess
-import os
 from run_command import run_command
 from get_path import get_path
 
