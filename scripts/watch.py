@@ -1,26 +1,20 @@
-import subprocess
 import time
 import os
 import threading
 from threads.prompt import prompt
-
-
-def run_command(command: str) -> str:
-    process = subprocess.run(
-        command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    if process.returncode != 0:
-        print(f"Error running command: {command}")
-        return process.stderr.decode()
-    return process.stdout.decode()
-
+from run_command import run_command
+from get_path import get_path
 
 thread = threading.Thread(target=prompt)
 
 
 def main():
+    path = get_path()
+    docker_compose_file = os.getenv(
+        "DOCKER_COMPOSE_FILE", f"{path}/app/docker-compose.yaml"
+    )
     print("Starting Docker Compose services...")
-    run_command("docker compose -f ../app/docker-compose.yaml up -d")
+    run_command(f"docker compose -f {docker_compose_file} up -d")
     print("Composed!\n")
     print("Running main.py...")
     print(run_command("docker exec -it webscraper python main.py"))
@@ -31,10 +25,9 @@ def main():
     print("\nWatching for changes...")
     thread.start()
 
-    path_to_watch = "/home/paprykdev/uni/webscraper/app"
     before = {
-        f: os.stat(os.path.join(path_to_watch, f)).st_mtime
-        for f in os.listdir(path_to_watch)
+        f: os.stat(os.path.join(path, "app", f)).st_mtime
+        for f in os.listdir(os.path.join(path, "app"))
         if f.endswith(".py")
     }
 
@@ -43,8 +36,8 @@ def main():
             break
         time.sleep(1)
         after = {
-            f: os.stat(os.path.join(path_to_watch, f)).st_mtime
-            for f in os.listdir(path_to_watch)
+            f: os.stat(os.path.join(path, "app", f)).st_mtime
+            for f in os.listdir(os.path.join(path, "app"))
             if f.endswith(".py")
         }
         for f in before:

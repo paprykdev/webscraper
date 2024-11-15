@@ -1,65 +1,30 @@
-import commands
-import subprocess
 import sys
-import threading
+from threads.commands import *
+from run_command import run_command
+from get_path import get_path
+from threads.help_list import help_list
 
 
 def prompt():
     while True:
         command = input("> ")
-        if commands.quitCondition(command):
-            print("Stopping and removing Docker Compose services...")
-            subprocess.run(
-                "docker compose -f ../app/docker-compose.yaml down",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
+        if quitCondition(command):
+            quitService(get_path())
             break
-        if commands.helpCondition(command):
-            print(
-                """
-["h", "help"], - for help.
-["q", "quit", "exit", "stop"], - to stop program.
-["c", "clear", "cls"], - to clear console.
-["r", "restart"], - to restart Docker Compose services.
-["run"], - to run main.py in docker container.
-["$..."], - to evaluate command in docker container.
-"""
-            )
+        if helpCondition(command):
+            print(help_list())
             continue
-        if commands.clearCondition(command):
-            print("\n" * 100)
+        if clearCondition(command):
+            run_command("clear")
             continue
         if command.startswith("$"):
-            print(commands.systemCommand(command))
+            systemCommand(command)
             continue
-        if commands.restartCondition(command):
-            print("Restarting Docker Compose services...")
-            subprocess.run(
-                "docker compose -f ../app/docker-compose.yaml down",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            subprocess.run(
-                "docker compose -f ../app/docker-compose.yaml up -d",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            print("Composed!")
+        if restartCondition(command):
+            restartService(get_path())
             continue
-        if commands.runCondition(command):
-            print("Running main.py...")
-            print(
-                subprocess.run(
-                    "docker exec -it webscraper python main.py",
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                ).stdout.decode()
-            )
+        if runCondition(command):
+            runService()
             continue
         if command == "":
             continue
