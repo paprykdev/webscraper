@@ -24,3 +24,4 @@ dist/
 build/
 
 # Ignore any other files or directories you want to exclude
+.supertajnyplik.donotopen

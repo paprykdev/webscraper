@@ -1,27 +1,42 @@
+# services:
+#   webscraper:
+#     build:
+#       context: .
+#       dockerfile: ./docker/scripts/Dockerfile
+#     container_name: webscraper
+#     volumes:
+#       - .:/usr/src/app
+#     command:
+#       - tail
+#       - -f
+#       - /dev/null
+#   selenium-hub:
+#     image: "selenium/hub:3.141.59"
+#     container_name: selenium-hub
+#     ports:
+#       - "4444:4444"
+#   # redis:
+#   #   image: "redis:alpine"
+#   #   volumes:
+#   #     - redis_data:/data
+#   #   ports:
+#   #     - "6379:6379"
+#
+# volumes:
+#   # redis_data:
+#   app:
+
 services:
-  webscraper:
+  scraper:
     build:
       context: .
       dockerfile: ./docker/scripts/Dockerfile
-    container_name: webscraper
+    container_name: scraper
     volumes:
       - .:/usr/src/app
     command:
       - tail
       - -f
       - /dev/null
-  selenium-hub:
-    image: "selenium/hub:3.141.59"
-    container_name: selenium-hub
-    ports:
-      - "4444:4444"
-  # redis:
-  #   image: "redis:alpine"
-  #   volumes:
-  #     - redis_data:/data
-  #   ports:
-  #     - "6379:6379"
-
 volumes:
-  # redis_data:
   app:

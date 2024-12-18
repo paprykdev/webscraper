@@ -17,7 +17,7 @@ def main():
     run_command(f"docker compose -f {docker_compose_file} up -d")
     print("Composed!\n")
     print("Running main.py...")
-    print(run_command("docker exec -it webscraper python main.py"))
+    print(run_command("docker exec -it webscraper python main.py", True))
     print(
         "\n\nWrite 'q' to stop program. Don't stop with 'Ctrl + C' otherwise docker container will be still on."
     )
@@ -44,7 +44,7 @@ def main():
             if before[f] != after[f]:
                 print(f"\nDetected change in {f}")
                 print("Running main.py...")
-                print(run_command("docker exec -it webscraper python main.py"))
+                print(run_command("docker exec -it webscraper python main.py", True))
                 before[f] = after[f]
 
 

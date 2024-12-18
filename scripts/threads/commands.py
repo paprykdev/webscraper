@@ -26,7 +26,7 @@ def clearScreen():
 
 def systemCommand(command: str) -> str:
     words = command[1:].split()
-    if words[0] == "":
+    if not words:
         return "Command not found. Write 'h' for help."
     try:
         print(
@@ -57,9 +57,5 @@ def runCondition(command: str) -> bool:
 
 def runService():
     print("Running main.py...")
-    print(
-        run_command(
-            "docker exec -it webscraper python main.py",
-        )
-    )
+    print(run_command("docker exec -it webscraper python main.py", True))
     return None

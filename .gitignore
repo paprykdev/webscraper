@@ -30,3 +30,9 @@ build/
 # IDE files
 .idea/
 .vscode/
+
+# Images
+images/
+
+# example
+example.py
