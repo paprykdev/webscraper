@@ -110,8 +110,8 @@ class MonetScraper:
             os.mkdir("dist")
         except FileExistsError:
             pass
-        open("dist/data.json",
-             "w").write(json.dumps([d for d in self.data], indent=4))
+        open("dist/data.json", "w", encoding="utf8").write(
+            json.dumps([d for d in self.data], indent=4, ensure_ascii=False))
 
     async def get_provenance(self):
         provenances = None
