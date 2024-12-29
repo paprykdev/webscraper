@@ -18,10 +18,10 @@ class MonetScraper:
             self.browser = await p.chromium.launch(headless=False)
             self.context = await self.browser.new_context()
             self.page = await self.context.new_page()
-            self.page.set_default_timeout(5000)
             await self.go_to(self.url)
             await self.skip_cookies()
             await self.get_hrefs()
+            self.page.set_default_timeout(5000)
             await self.get_data()
             self.save_data()
             await self.browser.close()
@@ -30,9 +30,6 @@ class MonetScraper:
         await self.wait_for_el('.button-disabled')
         await self.page.eval_on_selector('.button-disabled', 'el => el.removeAttribute("disabled")')
         await self.page.click('.button-disabled')
-
-    async def insert_value(self, selector, value):
-        await self.page.fill(selector, value)
 
     async def find_el(self, selector: str):
         await self.wait_for_el(selector)
