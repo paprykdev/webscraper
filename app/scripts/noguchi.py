@@ -1,7 +1,4 @@
 import time
-import requests
-import os
-import json
 from playwright.async_api import async_playwright
 import asyncio
 
@@ -10,6 +7,7 @@ import asyncio
 NOTE:
     Some pages doesn'y have info about paintings, so we need to skip them
 """
+
 
 class NoguchiScraper:
     def __init__(self, url="https://archive.noguchi.org/Browse/CR", base_url="https://archive.noguchi.org"):
@@ -35,9 +33,6 @@ class NoguchiScraper:
     async def skip_cookies(self):
         element = await self.find_el('a.acceptCookie')
         await element.click()
-
-    async def insert_value(self, selector, value):
-        await self.page.fill(selector, value)
 
     async def find_el(self, selector: str):
         await self.wait_for_el(selector)
