@@ -5,7 +5,7 @@ import asyncio
 # TODO: Scrape through all the pages
 """
 NOTE:
-    Some pages doesn'y have info about paintings, so we need to skip them
+    Some pages don't have info about paintings, so we need to skip them
 """
 
 
