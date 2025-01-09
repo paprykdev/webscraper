@@ -6,7 +6,9 @@ from playwright.async_api import async_playwright
 
 
 class MonetScraper:
-    def __init__(self, url="https://digitalprojects.wpi.art/monet/artworks?page=1", base_url="https://digitalprojects.wpi.art"):
+    def __init__(self,
+                 url="https://digitalprojects.wpi.art/monet/artworks?page=1",
+                 base_url="https://digitalprojects.wpi.art"):
         self.hrefs = []
         self.base_url = base_url
         self.url = url
@@ -28,7 +30,8 @@ class MonetScraper:
 
     async def skip_cookies(self):
         await self.wait_for_el('.button-disabled')
-        await self.page.eval_on_selector('.button-disabled', 'el => el.removeAttribute("disabled")')
+        await self.page.eval_on_selector(
+            '.button-disabled', 'el => el.removeAttribute("disabled")')
         await self.page.click('.button-disabled')
 
     async def find_el(self, selector: str):
@@ -55,20 +58,21 @@ class MonetScraper:
     async def get_hrefs(self):
         for i in range(self.pages):
             if i > 0:
-                pagination = await self.find_el('cpd-controls-pagination > button:last-child')
+                pagination = await self.find_el(
+                    'cpd-controls-pagination > button:last-child')
                 await pagination.click()
                 time.sleep(1)
-            el = await self.find_els('.artwork-search-results > article:not(.not-included) > a')
+            el = await self.find_els(
+                '.artwork-search-results > article:not(.not-included) > a')
             for e in el:
                 self.hrefs.append(await e.get_attribute('href'))
 
     async def get_image(self):
-        image = await self.find_el(".not-full-screen-image-container > img")
-        image = await image.get_attribute('srcset')
-        image = image.split(",")[0].split(" ")[0]
+        image = "null"
         i = 0
         while image == "null" and i < 10:
-            image = await self.find_el(".not-full-screen-image-container > img")
+            image = await self.find_el(
+                ".not-full-screen-image-container > img")
             image = await image.get_attribute('srcset')
             image = image.split(",")[0].split(" ")[0]
             time.sleep(0.5)
@@ -76,16 +80,22 @@ class MonetScraper:
 
         return image
 
-    def curl_image(self, image, title):
+    def curl_image(self, image, title, id):
         try:
-            os.mkdir("images")
+            os.mkdir("dist")
+        except FileExistsError:
+            pass
+
+        try:
+            os.mkdir("dist/images")
         except FileExistsError:
             pass
 
         if image != "null":
             image_response = requests.get(image)
             if image_response.status_code == 200:
-                with open(f'images/{title.lower().replace(",", "").replace(" ", "_")}.jpg', 'wb') as img_file:
+                with open(f'dist/images/{id}.jpg', 'wb')\
+                        as img_file:
                     img_file.write(image_response.content)
 
     async def get_title(self):
@@ -148,7 +158,7 @@ class MonetScraper:
         return arr
 
     async def get_data(self):
-        for href in self.hrefs:
+        for index, href in enumerate(self.hrefs):
             await self.go_to(f"{self.base_url}{href}")
             image = await self.get_image()
             title = await self.get_title()
@@ -157,8 +167,9 @@ class MonetScraper:
             exhibitions = await self.get_exhibitions()
             bibliography = await self.get_bibliography()
 
-            self.curl_image(image, title)
+            self.curl_image(image, title, id=index)
             self.data.append({
+                "id": index,
                 "title": title,
                 "date": get_info["date"],
                 "name_of_artist": "Claude Monet",

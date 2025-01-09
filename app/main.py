@@ -3,4 +3,9 @@ from scripts.monet import MonetScraper
 
 if __name__ == "__main__":
     scraper = MonetScraper()
-    asyncio.run(scraper.scrape())
+    try:
+        asyncio.run(scraper.scrape())
+    except KeyboardInterrupt:
+        print('\nDUPA\n')
+        scraper.save_data()
+        asyncio.run(scraper.browser.close())
