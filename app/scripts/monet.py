@@ -3,6 +3,7 @@ import requests
 import os
 import json
 from playwright.async_api import async_playwright
+from sys import exit
 
 
 class MonetScraper:
@@ -67,17 +68,23 @@ class MonetScraper:
             for e in el:
                 self.hrefs.append(await e.get_attribute('href'))
 
-    async def get_image(self):
+    async def get_image(self, href):
         image = "null"
         i = 0
-        while image == "null" and i < 10:
-            image = await self.find_el(
-                ".not-full-screen-image-container > img")
+        self.page.set_default_timeout(10000)
+        while image == "null" and i < 30:
+            try:
+                image = await self.find_el(
+                    ".not-full-screen-image-container > img")
+            except Exception as e:
+                print(f"Error: {e}\n\nOn page: {href}")
+                exit(1)
             image = await image.get_attribute('srcset')
             image = image.split(",")[0].split(" ")[0]
             time.sleep(0.5)
             i += 1
 
+        self.page.set_default_timeout(5000)
         return image
 
     def curl_image(self, image, title, id):
@@ -160,7 +167,7 @@ class MonetScraper:
     async def get_data(self):
         for index, href in enumerate(self.hrefs):
             await self.go_to(f"{self.base_url}{href}")
-            image = await self.get_image()
+            image = await self.get_image(href)
             title = await self.get_title()
             get_info = await self.get_info()
             provenance = await self.get_provenance()
