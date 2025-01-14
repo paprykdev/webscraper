@@ -61,8 +61,7 @@ class NoguchiScraper:
         time.sleep(5)
 
     async def get_hrefs(self):
-        await self.load_more()
-        await self.load_more()
+        [await self.load_more() for _ in range(2)]
         links = await self.find_els('div.grid-flex.grid-cr-browse div.item-grid a')
         arr = []
         for link in links:
