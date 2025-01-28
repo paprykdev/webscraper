@@ -21,6 +21,8 @@ Thumbs.db
 
 # Ignore output files
 dist/
+torres/
+monet/
 build/
 *.egg-info/
 

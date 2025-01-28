@@ -3,7 +3,7 @@ import requests
 import os
 import json
 from playwright.async_api import async_playwright
-from sys import exit
+import asyncio
 
 
 class MonetScraper:
@@ -52,8 +52,7 @@ class MonetScraper:
             try:
                 await self.page.goto(url, timeout=60000)
                 hack = False
-            except Exception as e:
-                print(e)
+            except Exception:
                 print(f'error go to {url}')
 
     async def get_hrefs(self):
@@ -78,9 +77,11 @@ class MonetScraper:
                     ".not-full-screen-image-container > img")
             except Exception as e:
                 print(f"Error: {e}\n\nOn page: {href}")
-                exit(1)
+                return None
             image = await image.get_attribute('srcset')
-            image = image.split(",")[0].split(" ")[0]
+            image = image.split(",")
+            if len(image) > 0:
+                image = image[len(image) - 1].strip().split(" ")[0]
             time.sleep(0.5)
             i += 1
 
@@ -89,19 +90,14 @@ class MonetScraper:
 
     def curl_image(self, image, title, id):
         try:
-            os.mkdir("dist")
-        except FileExistsError:
-            pass
-
-        try:
-            os.mkdir("dist/images")
+            os.mkdir("monet")
         except FileExistsError:
             pass
 
         if image != "null":
             image_response = requests.get(image)
             if image_response.status_code == 200:
-                with open(f'dist/images/{id}.jpg', 'wb')\
+                with open(f'monet/{id}.jpg', 'wb')\
                         as img_file:
                     img_file.write(image_response.content)
 
@@ -111,7 +107,7 @@ class MonetScraper:
         return title
 
     async def get_info(self):
-        info = await self.find_els("article[_ngcontent-ng-c2311764719] p > p")
+        info = await self.find_els("article[_ngcontent-ng-c746531210] p > p")
         return {
             "date": await info[0].inner_text(),
             "technique": await info[1].inner_text(),
@@ -121,18 +117,17 @@ class MonetScraper:
 
     def save_data(self):
         try:
-            os.mkdir("dist")
+            os.mkdir("monet")
         except FileExistsError:
             pass
-        open("dist/data.json", "w", encoding="utf8").write(
+        open("monet/monet.json", "w", encoding="utf8").write(
             json.dumps([d for d in self.data], indent=4, ensure_ascii=False))
 
     async def get_provenance(self):
         provenances = None
         try:
             provenances = await self.find_els("#provenance p p")
-        except Exception as e:
-            print(e)
+        except Exception:
             return None
         return [await p.inner_text() for p in provenances]
 
@@ -140,8 +135,7 @@ class MonetScraper:
         exhibitions = None
         try:
             exhibitions = await self.find_els("#exhibition article")
-        except Exception as e:
-            print(e)
+        except Exception:
             return None
         arr = []
         for paragraph in exhibitions:
@@ -154,8 +148,7 @@ class MonetScraper:
         bibliography = None
         try:
             bibliography = await self.find_els("#publication article")
-        except Exception as e:
-            print(e)
+        except Exception:
             return None
         arr = []
         for paragraph in bibliography:
@@ -167,12 +160,17 @@ class MonetScraper:
     async def get_data(self):
         for index, href in enumerate(self.hrefs):
             await self.go_to(f"{self.base_url}{href}")
+            print(f"{index + 1}/{len(self.hrefs)}")
             image = await self.get_image(href)
+            if not image:
+                continue
+            self.page.set_default_timeout(200)
             title = await self.get_title()
             get_info = await self.get_info()
             provenance = await self.get_provenance()
             exhibitions = await self.get_exhibitions()
             bibliography = await self.get_bibliography()
+            self.page.set_default_timeout(5000)
 
             self.curl_image(image, title, id=index)
             self.data.append({
@@ -184,8 +182,18 @@ class MonetScraper:
                 "dimensions": get_info["dimensions"],
                 "signature": get_info["signature"],
                 "location": None,
-                "image": image,
-                "provenance": provenance,
-                "exhibitions": exhibitions,
-                "bibliography": bibliography,
+                "image_url": image,
+                "provenance": provenance if provenance else [],
+                "exhibitions": exhibitions if exhibitions else [],
+                "bibliography": bibliography if bibliography else [],
             })
+
+
+if __name__ == "__main__":
+    scraper = MonetScraper()
+    try:
+        asyncio.run(scraper.scrape())
+    except KeyboardInterrupt:
+        print('\nSaving data to json..\n')
+        scraper.save_data()
+        asyncio.run(scraper.browser.close())
