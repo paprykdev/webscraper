@@ -24,4 +24,4 @@ This project is a web scraper designed to extract data from websites.
 
 ## Video
 
-[![Watch the video](https://drive.google.com/drive/folders/1BrLMTmlHGz7__cs6-g-UorUgbfC-sSXG?usp=drive_link)
+[Watch the video](https://drive.google.com/drive/folders/1BrLMTmlHGz7__cs6-g-UorUgbfC-sSXG?usp=drive_link)
