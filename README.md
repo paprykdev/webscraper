@@ -22,3 +22,6 @@ This project is a web scraper designed to extract data from websites.
 1. `docker exec -it docker exec -it scraper xvfb-run --auto-servernum --server-num=1 --server-args='-screen 0, 1920x1080x24' python3 scripts/torres.py` for the torres scraper
 1. `docker compose down`
 
+## Video
+
+[![Watch the video](https://drive.google.com/drive/folders/1BrLMTmlHGz7__cs6-g-UorUgbfC-sSXG?usp=drive_link)
