@@ -6,8 +6,6 @@ from playwright.async_api import async_playwright
 import asyncio
 
 
-# max pages = 41
-
 class TorresScraper:
     def __init__(self,
                  url="https://www.torresgarcia.com"):
